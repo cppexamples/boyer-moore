@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(GTest REQUIRED)
 #include_directories(${GTEST_INCLUDE_DIRS})
 
-add_executable(bm bm.cpp)
+add_executable(bm bmmain.cpp boyermoore.cpp)
 target_compile_options(bm PRIVATE -Ofast) #tail recursion
 
 # Link runTests with what we want to test and the GTest and pthread library
