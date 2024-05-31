@@ -1,35 +1,28 @@
 #include "boyermoore.hpp"
 #include "iostream"
-#include "string.h"
 
-BoyerMoore::BoyerMoore(char *pat, char *txt) : mpat{pat}, mtxt{txt}
-{
-    m = strlen(mpat);
-    n = strlen(mtxt);
+BoyerMoore::BoyerMoore(std::span<char> p)
+{    
+    m = p.size();
+    pat = p;    
     make_d0();
-    make_d1();
-    s = mtxt + m - 1;
-    endtxt = mtxt + n;       
-    std::cout << mpat << std::endl;
-    std::cout << mtxt << std::endl;
-    std::cout << "012345678901234567890" << std::endl;
-    std::cout << "          1         2" << std::endl;
+    make_d1();    
 };
 
 // see Fast String Seaching by andrew hume and daniel sanday
 void BoyerMoore::make_d0()
-{
+{    
     for (int i = 0; i < LENGTH_OF_ALPHABET; i++)
         d0[i] = m;
 
-    for (int j = 0; j < m ; j++){
-        d0[int(*(mpat + j))] = m-j-1;       
-    }    
+    for (int j = 0; j < m; j++)
+    {
+        d0[int(pat[j])] = m - j - 1;        
+    } 
 }
 
 void BoyerMoore::make_d1()
-{
-
+{    
     for (int i = 0; i < LENGTH_OF_ALPHABET; i++)
     {
         d1[i] = -1;
@@ -37,33 +30,37 @@ void BoyerMoore::make_d1()
 
     for (int j = 0; j < m; j++)
     {
-        d1[int(*(mpat + j))] = j;
-    }
-}
-
-// see Fast String Seaching by andrew hume and daniel sanday
-void BoyerMoore::ufast()
-{    
-    int k = 0;
-    while (true){
-        k = d0[int(*(s+=k))];                
-        if(k==0 || endtxt<s) break;
+        d1[int(pat[j])] = j;
     }    
 }
 
-size_t BoyerMoore::search()
+// see Fast String Seaching pdf by andrew hume and daniel sanday
+void BoyerMoore::ufast()
 {    
+    int k = 0;
+    do {
+        k = d0[int(txt[s += k])];        
+    } while(k!=0 && s< n);
+}
+
+size_t BoyerMoore::search(std::span<char> t)
+{
+    n = t.size();
+    txt = t;
+
+    printhead();
 
     int skip = 0;
-    while (s < endtxt)
-    {        
-        ufast();        
+    s=m-1;
+    while (s < n)
+    {
+        ufast();
         skip = 0;
         for (int j = m - 1 - 1; j >= 0; j--) // mpat[m-1] already in function ufast tested
         {
-            if (mpat[j] != *(s - (m - j-1)))
+            if (pat[j] != txt[s - (m - j - 1)])
             {
-                skip = j - d1[int(*(s - (m - j-1)))];
+                skip = j - d1[int(txt[s - (m - j - 1)])];
                 if (skip < 1)
                     skip = 1;
                 break;
@@ -71,19 +68,17 @@ size_t BoyerMoore::search()
         }
         if (skip == 0)
         {
-            return size_t(s-mtxt-m+1);
+            return size_t(s - m + 1);
         }
-        s+=skip;
+        s += skip;
     }
     return n;
 }
 
-void BoyerMoore::print()
+void BoyerMoore::printhead()
 {
-    std::cout << mpat << std::endl;
-    size_t m = strlen(mpat);
-    for (auto j = mpat; j < mpat + m; j++)
-    {
-        std::cout << (char)*(j) << " " << d1[(int)*j] << std::endl;
-    }
+   // std::cout << pat.data() << std::endl;
+   // std::cout << txt.data() << std::endl;
+   // std::cout << "012345678901234567890" << std::endl;
+   // std::cout << "          1         2" << std::endl;    
 }

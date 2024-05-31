@@ -1,8 +1,12 @@
 #include <iostream>
 #include "boyermoore.hpp"
+#include "string.h"
 
 int main(){
-    BoyerMoore bm((char *)"bat",(char *)"tabataraabatara");
-    auto result=bm.search();
+    char p[]="bat";
+    char t[]="tabataraabatara";
+
+    BoyerMoore bm(std::span(p,strlen(p)));
+    auto result=bm.search(std::span(t,strlen(t)));
     std::cout <<result << std::endl;
 }
