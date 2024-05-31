@@ -4,12 +4,17 @@
 
 TEST(ChecksumTest, bat)
 {
-    BoyerMoore bm((char *)"bat");
-    ASSERT_EQ(9,bm.search((char *)"tarataraabatara"));    
+    BoyerMoore bm((char *)"bat",(char *)"tarataraabatara");
+    ASSERT_EQ(9,bm.search());    
 }
 
 TEST(ChecksumTest, raab)
 {
-    BoyerMoore bm((char *)"raab");
-    ASSERT_EQ(6,bm.search((char *)"tarataraabatara"));    
+    BoyerMoore bm((char *)"raab",(char *)"tarataraabatara");
+    ASSERT_EQ(6,bm.search());    
+}
+TEST(ChecksumTest, bbb)
+{
+    BoyerMoore bm((char *)"bbb",(char *)"tarataraabatara");
+    ASSERT_EQ(6,bm.search());    
 }
